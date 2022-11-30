@@ -19,7 +19,7 @@ pkg-config --libs fuse xmu
 
 ### generate include statement (from non-standard location)
 ```
-PKG_CONFIG_PATH=/usr/local/lib/ pkg-config --libs fuse
+PKG_CONFIG_PATH=/usr/local/lib/:/usr/local/lib/pkgconfig pkg-config --libs fuse
 ```
 ```
 -L/usr/local/lib -lfuse -pthread
