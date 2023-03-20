@@ -13,12 +13,19 @@ BOOST_DIR_INCLUDE=/Volumes/numerous/2022/usr/local/homebrew/Cellar/boost/1.81.0_
 BOOST_DIR_LIB=/Volumes/numerous/2022/usr/local/homebrew/Cellar/boost/1.81.0_1/lib/
 
 cat <<EOF > debug.auto.gdb
-b main
+# b main
+b detail::status
+# run
 run
+# list
+# next
+# next
+# step
+# step
+# print f
+bt
+up
 list
-next
-next
-step
 quit
 EOF
 
