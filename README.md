@@ -1,5 +1,8 @@
 ## Make vs CMake vs IMake
 
+## automake
+* for legacy gnu tools (CMake is more modern)
+* 
 ## CMake
 * A build system generator, not a build system itself.
 * Generates Makefiles, Ninja, or Visual Studio project files.
