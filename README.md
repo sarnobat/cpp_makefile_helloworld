@@ -1,4 +1,4 @@
-## Make vs CMake vs IMake
+## Make vs automake vs CMake vs IMake
 
 ## automake
 * `/Volumes/git/github/2024/docker_images/bison_helloworld_automake/`
