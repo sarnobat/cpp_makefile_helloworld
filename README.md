@@ -1,7 +1,7 @@
 ## Make vs CMake vs IMake
 
 ## automake
-* /Volumes/git/github/2024/docker_images/bison_helloworld_automake/
+* `/Volumes/git/github/2024/docker_images/bison_helloworld_automake/`
 * for legacy gnu tools (CMake is more modern)
 * Good to understand how all those projects are built
 
