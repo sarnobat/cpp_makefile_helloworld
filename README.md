@@ -5,6 +5,19 @@
 * for legacy gnu tools (CMake is more modern)
 * Good to understand how all those projects are built
 
+```
+configure.ac ─────┐
+                  ├──> autoconf ───> configure
+Makefile.am ──────┘
+      │
+      └──> automake ───> Makefile.in
+                            │
+                            └──> ./configure ───> Makefile
+                                                          │
+                                                          └──> make ───> binary/object files
+
+```
+
 ## CMake
 * see /Volumes/git/github/2024/docker_images/bison_helloworld_cmake/src
 * A build system generator, not a build system itself.
