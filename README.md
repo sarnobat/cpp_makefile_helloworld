@@ -6,15 +6,21 @@
 * Good to understand how all those projects are built
 
 ```
-configure.ac ─────┐
-                  ├──> autoconf ───> configure
-Makefile.am ──────┘
-      │
-      └──> automake ───> Makefile.in
-                            │
-                            └──> ./configure ───> Makefile
-                                                          │
-                                                          └──> make ───> binary/object files
++--------------+     +------------+     +-------------+     +-----------+     +----------+     +------+     +--------------+     +----------+
+| Makefile.am  | --> |  automake  | --> | Makefile.in | --> | configure | --> | Makefile | --> | make | --> | object files | --> | binaries |
++--------------+     +------------+     +-------------+     +-----------+     +----------+     +------+     +--------------+     +----------+
+                                                              ^
+                                                              |
+                                                              |
++--------------+     +------------+                           |
+| configure.ac | --> |  autoconf  | --------------------------+
++--------------+     +------------+
+  |
+  |
+  v
++--------------+     +------------+
+|   aclocal    | --> | aclocal.m4 |
++--------------+     +------------+
 
 ```
 
