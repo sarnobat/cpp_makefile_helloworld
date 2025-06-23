@@ -29,7 +29,7 @@ list
 quit
 EOF
 
-cat <<EOF | batcat --plain --paging=never --language sh --theme TwoDark
+cat <<EOF | batcat --style=plain --paging=never --language sh --theme TwoDark
 Manpage:
 	-g                      Generate source-level debug information
 	-v                      Show commands to run and use verbose output
