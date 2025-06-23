@@ -1,9 +1,28 @@
-## Make vs CMake vs IMake
+## Make vs automake vs CMake vs IMake
 
 ## automake
-* /Volumes/git/github/2024/docker_images/bison_helloworld_automake/
+* `/Volumes/git/github/2024/docker_images/bison_helloworld_automake/`
 * for legacy gnu tools (CMake is more modern)
 * Good to understand how all those projects are built
+
+```
++--------------+     +------------+     +-------------+     +-----------+     +----------+     +------+     +--------------+     +----------+
+| Makefile.am  | --> |  automake  | --> | Makefile.in | --> | configure | --> | Makefile | --> | make | --> | object files | --> | binaries |
++--------------+     +------------+     +-------------+     +-----------+     +----------+     +------+     +--------------+     +----------+
+                                                              ^
+                                                              |
+                                                              |
++--------------+     +------------+                           |
+| configure.ac | --> |  autoconf  | --------------------------+
++--------------+     +------------+
+  |
+  |
+  v
++--------------+     +------------+
+|   aclocal    | --> | aclocal.m4 |
++--------------+     +------------+
+
+```
 
 ## CMake
 * see /Volumes/git/github/2024/docker_images/bison_helloworld_cmake/src
