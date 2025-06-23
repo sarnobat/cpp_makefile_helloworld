@@ -8,10 +8,13 @@
 
 set -o errexit
 
-GPP=/Volumes/numerous/usr/local/homebrew/Cellar/gcc/11.3.0_2/bin/g++-11
-BOOST_DIR_INCLUDE=/Volumes/numerous/2022/usr/local/homebrew/Cellar/boost/1.81.0_1/include/
-BOOST_DIR_LIB=/Volumes/numerous/2022/usr/local/homebrew/Cellar/boost/1.81.0_1/lib/
+GPP=/opt/homebrew/Cellar/gcc/15.1.0/bin/g++-15
+BOOST_DIR_INCLUDE=/opt/homebrew/Cellar/boost/1.88.0/include
+test -d $BOOST_DIR_INCLUDE
+# BOOST_DIR_LIB=/Volumes/numerous/2022/usr/local/homebrew/Cellar/boost/1.81.0_1/lib/
+BOOST_DIR_LIB=/opt/homebrew/Cellar/boost/1.88.0/lib
 
+test -d $BOOST_DIR_LIB
 cat <<EOF > debug.auto.gdb
 # b main
 b detail::status
