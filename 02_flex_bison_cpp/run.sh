@@ -33,5 +33,10 @@ make
 	Assertion failed: (false), function parse, file parser.y, line 85.
 	prompt> zsh: abort      ./mycompiler
 
+Quick start
+-----------
+make
+echo "f();" | ./mycompiler
+
 EOF
 
