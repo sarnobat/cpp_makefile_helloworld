@@ -27,8 +27,6 @@
 
 using namespace std;
 
-using namespace std;
-
 int main(int argc, char *argv[]) {
   ///
   /// 5) CLI options
@@ -40,19 +38,23 @@ int main(int argc, char *argv[]) {
   ///
   std::string line;
   while (std::getline(std::cin, line)) {
+    
     std::string myString = line;
     struct stat buffer;
+
     if (stat(myString.c_str(), &buffer) == 0) {
 
       //
       // File path checker
       //
+
       // check if it's a file or a dir
       if (S_ISREG(buffer.st_mode)) {
         cout << "file:\t" << myString << std::endl;
       } else if (S_ISDIR(buffer.st_mode)) {
         cout << "dir:\t" << myString << std::endl;
       }
+
       // get absolute path
       char resolved_path[PATH_MAX];
       realpath(myString.c_str(), resolved_path);
@@ -61,6 +63,7 @@ int main(int argc, char *argv[]) {
       ///
       /// 6) Execute shell command
       ///
+
       std::string cmd = std::string("dirname ") + myString;
 
       char buffer[128];
@@ -79,7 +82,9 @@ int main(int argc, char *argv[]) {
       ///
       /// 5) dictionary
       ///
+
     } else {
+      
       ///
       /// 1) Print to stdout
       ///
