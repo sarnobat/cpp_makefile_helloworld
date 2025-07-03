@@ -11,6 +11,8 @@ set -o errexit
 echo `date +%s::`"$0" >> ~/db.git/command_history.txt >> ~/db.git/command_history_timestamped.txt
 
 cat <<EOF | batcat --style=plain --paging=never --language sh --theme TwoDark
+Thanks to https://github.com/ezaquarii/bison-flex-cpp-example
+
 call graph
 ----------
 	libsystem_kernel.dylib!__pthread_kill (Unknown Source:0)
