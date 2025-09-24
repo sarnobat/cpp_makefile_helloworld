@@ -24,6 +24,10 @@
 #include <regex>
 #include <string>
 #include <sys/stat.h>
+#include <getopt.h>
+#include <cxxopts.hpp>
+
+using namespace std;
 
 using namespace std;
 
@@ -31,7 +35,33 @@ int main(int argc, char *argv[]) {
   ///
   /// 5) CLI options
   ///
- 
+  const struct option long_options[] = {
+      {"file", required_argument, nullptr, 'f'},
+      {"output", required_argument, nullptr, 'o'},
+      {"verbose", no_argument, nullptr, 'v'},
+      {"help", no_argument, nullptr, 'h'},
+      {nullptr, 0, nullptr, 0}};
+
+  int opt;
+  while ((opt = getopt_long(argc, argv, "f:o:vh", long_options, nullptr)) !=
+         -1) {
+    switch (opt) {
+    case 'f':
+      std::cout << "Input file: " << optarg << std::endl;
+      break;
+    case 'o':
+      std::cout << "Output file: " << optarg << std::endl;
+      break;
+    case 'v':
+      std::cout << "Verbose mode enabled." << std::endl;
+      break;
+    case 'h':
+    default:
+      std::cout << "Usage: [--file input] [--output output] [--verbose]"
+                << std::endl;
+      return 1;
+    }
+  }
 
   ///
   /// 1) Loop over stdin
