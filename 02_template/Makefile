@@ -1,4 +1,4 @@
-all:	build
+all:	build	info	run
 
 build:
 	# cxxopts's entire code is in the header, so no library is neeed
@@ -14,5 +14,8 @@ init:
 fmt:
 	clang-fmt helloworld.cpp
 
+info:	
+	ls -lh /Volumes/git/github/depot_parent/cpp/02_template/helloworld /Volumes/git/github/2024/repos/templates/helloworldc
+
 run:
-	find /tmp/ | ./helloworld
+	find /tmp/ | ./helloworld | head
