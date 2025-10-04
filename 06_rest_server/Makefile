@@ -10,9 +10,9 @@ run:
 
 	# 3) Run
 	echo "Now run:		make test_client"
-	./hello_pipeline &
+	./hello_pipeline
 	open 'http://localhost:8080/'
-	sleep 5
+	sleep 60
 	
 test:
 	./hello_pipeline &
