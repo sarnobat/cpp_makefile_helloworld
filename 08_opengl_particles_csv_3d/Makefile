@@ -57,8 +57,9 @@ $(BIN): $(CPPSRC) $(EXTRA_HEADERS)
 
 # === Run target ===
 run: $(BIN)
-	./$(BIN) data.csv --map &
-	@echo "Try running on /Volumes/git/github/depot_parent/rust/20_exif_to_csv/out.csv"
+	./$(BIN) data.csv &
+	@echo "Try running on /Volumes/git/github/depot_parent/rust/20_exif_to_csv/out.csv, i.e."
+	@echo "./$(BIN) --map exif.csv"
 
 # === Clean target ===
 clean:
