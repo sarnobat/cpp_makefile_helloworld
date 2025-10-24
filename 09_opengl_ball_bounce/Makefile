@@ -1,32 +1,31 @@
 # -------------------------------
 # Bouncing Ball OpenGL Makefile
 # -------------------------------
+# GLAD zip downloaded from:
+# https://glad.dav1d.de/generated/tmpl_uuw6hqglad/
+# -------------------------------
 
 CXX := g++
 CXXFLAGS := -std=c++17 -O2 -Wall
 
 HOMEBREW_PREFIX := $(shell brew --prefix)
 
-# Include paths
+# Include paths (use glad folder as-is)
 INCLUDES := -I. \
             -I$(HOMEBREW_PREFIX)/include \
-            -I$(HOMEBREW_PREFIX)/Cellar/glfw/3.4/include
+            -I$(HOMEBREW_PREFIX)/Cellar/glfw/3.4/include \
+            -Iglad \
+            -Iglad/KHR \
+            -Iglad/glad
 
 # Libraries
 LIBS := -L$(HOMEBREW_PREFIX)/lib -lglfw -framework OpenGL
 
-# GLAD
-GLAD_DIR := glad
-GLAD_ZIP := glad.zip
-GLAD_SRC := $(GLAD_DIR)/glad.c
-GLAD_HEADERS := $(GLAD_DIR)/glad.h $(GLAD_DIR)/KHR/khrplatform.h
-
 # Sources
-SRC := main.cpp $(GLAD_SRC)
+SRC := main.cpp glad/glad.c
 OBJ := $(SRC:.cpp=.o)
 OBJ := $(OBJ:.c=.o)
 
-# Target
 TARGET := bouncing_ball
 
 # -------------------------------
@@ -52,16 +51,12 @@ install_homebrew_libs:
 		echo "GLM already installed."; \
 	fi
 
+# Extract GLAD only if folder does not exist
 glad:
-	@if [ ! -f $(GLAD_SRC) ]; then \
-		echo "Extracting GLAD from $(GLAD_ZIP)..."; \
-		unzip -o $(GLAD_ZIP) -d temp_glad; \
-		mkdir -p $(GLAD_DIR)/KHR $(GLAD_DIR)/glad; \
-		cp temp_glad/include/glad/glad.h $(GLAD_DIR)/glad/; \
-		cp temp_glad/include/KHR/khrplatform.h $(GLAD_DIR)/KHR/; \
-		cp temp_glad/src/glad.c $(GLAD_DIR)/; \
-		rm -rf temp_glad; \
-		echo "GLAD setup complete."; \
+	@if [ ! -d glad ]; then \
+		echo "Extracting GLAD from glad.zip..."; \
+		unzip -o glad.zip; \
+		echo "GLAD extraction complete."; \
 	else \
 		echo "GLAD already exists."; \
 	fi
