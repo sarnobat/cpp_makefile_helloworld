@@ -1,0 +1,9 @@
+prefix=/Volumes/git/github/depot_parent/cpp/09_opengl_ball_bounce
+exec_prefix=
+includedir=/local_include
+libdir=/lib
+Name: glad
+Description: Local GLAD OpenGL loader
+Version: 2.0.8
+Cflags: -I -I/KHR
+Libs:

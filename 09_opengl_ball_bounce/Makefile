@@ -1,49 +1,70 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -O2 -I.
 TARGET = bouncing_ball
 SOURCES = main.cpp glad.c
 OBJECTS = main.o glad.o
 
-# GLAD variables
-GLAD_ZIP_URL = https://github.com/Dav1dde/glad/archive/refs/tags/v2.0.8.zip
-GLAD_DIR = glad-2.0.8
-GLAD_GENERATOR = $(GLAD_DIR)/utility/generateall.sh
+# Local paths
+GLAD_ZIP = glad.zip
+GLAD_TMP = glad_tmp
+LOCAL_INCLUDE = local_include
+LOCAL_SRC = local_src
+PKGCONFIG_DIR = pkgconfig
+PKGCONFIG_FILE = $(PKGCONFIG_DIR)/glad.pc
 
-all: glad $(TARGET)
+# Compiler flags via pkg-config
+CXXFLAGS = -std=c++17 -O2 $(shell PKG_CONFIG_PATH=$(PKGCONFIG_DIR) pkg-config --cflags glad glfw3)
+LDFLAGS  = $(shell pkg-config --static --libs glfw3) \
+           -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 
-# Download, generate, and copy GLAD files
+all: brew glfw glad $(TARGET)
+
+# Install Homebrew if missing (macOS only)
+brew:
+	@command -v brew >/dev/null 2>&1 || ( \
+		echo "Homebrew not found. Installing..."; \
+		/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; \
+	)
+
+# Install GLFW via Homebrew if missing
+glfw:
+	@brew list glfw >/dev/null 2>&1 || ( \
+		echo "GLFW not found. Installing via Homebrew..."; \
+		brew install glfw; \
+	)
+
+# Extract GLAD and set up local pkg-config
 glad:
-	@echo "==> Fetching GLAD v2.0.8 from GitHub..."
-	@rm -f glad.c glad.h khrplatform.h
-	@command -v wget >/dev/null 2>&1 || (echo "Error: wget not installed!"; exit 1)
-	@wget -q -O glad.zip $(GLAD_ZIP_URL) || (echo "Error: wget download failed"; exit 1)
-	@command -v unzip >/dev/null 2>&1 || (echo "Error: unzip not installed!"; exit 1)
-	@unzip -q -o glad.zip || (echo "Error: unzip failed"; exit 1)
-	@echo "Running GLAD generator..."
-	@test -f $(GLAD_GENERATOR) || (echo "Error: generator script not found!"; exit 1)
-	@chmod +x $(GLAD_GENERATOR)
-	@cd $(GLAD_DIR) && ./utility/generateall.sh c || (echo "Error: GLAD generation failed"; exit 1)
-	@echo "Copying generated files to project root..."
-	@test -f $(GLAD_DIR)/include/glad/glad.h || (echo "Error: glad.h not generated"; exit 1)
-	@cp -f $(GLAD_DIR)/include/glad/glad.h .
-	@test -f $(GLAD_DIR)/include/KHR/khrplatform.h || (echo "Error: khrplatform.h not generated"; exit 1)
-	@cp -f $(GLAD_DIR)/include/KHR/khrplatform.h .
-	@test -f $(GLAD_DIR)/src/glad.c || (echo "Error: glad.c not generated"; exit 1)
-	@cp -f $(GLAD_DIR)/src/glad.c .
-	@rm -rf $(GLAD_DIR) glad.zip
-	@echo "GLAD setup complete."
+	@echo "==> Setting up local GLAD..."
+	@test -f $(LOCAL_INCLUDE)/glad/glad.h || \
+	rm -rf $(GLAD_TMP) $(LOCAL_INCLUDE) $(LOCAL_SRC) $(PKGCONFIG_DIR)
+	@unzip -q -o $(GLAD_ZIP) -d $(GLAD_TMP) || (echo "Error: unzip failed"; exit 1)
+	@mkdir -p $(LOCAL_INCLUDE)/glad $(LOCAL_INCLUDE)/KHR $(LOCAL_SRC) $(PKGCONFIG_DIR)
+	@cp -f $(GLAD_TMP)/include/glad/glad.h $(LOCAL_INCLUDE)/glad/
+	@cp -f $(GLAD_TMP)/include/KHR/khrplatform.h $(LOCAL_INCLUDE)/KHR/
+	@cp -f $(GLAD_TMP)/src/glad.c $(LOCAL_SRC)/glad.c
+	@echo "prefix=$(CURDIR)" > $(PKGCONFIG_FILE)
+	@echo "exec_prefix=$$prefix" >> $(PKGCONFIG_FILE)
+	@echo "includedir=$$prefix/$(LOCAL_INCLUDE)" >> $(PKGCONFIG_FILE)
+	@echo "libdir=$$prefix/lib" >> $(PKGCONFIG_FILE)
+	@echo "Name: glad" >> $(PKGCONFIG_FILE)
+	@echo "Description: Local GLAD OpenGL loader" >> $(PKGCONFIG_FILE)
+	@echo "Version: 2.0.8" >> $(PKGCONFIG_FILE)
+	@echo "Cflags: -I$${includedir} -I$${includedir}/KHR" >> $(PKGCONFIG_FILE)
+	@echo "Libs:" >> $(PKGCONFIG_FILE)
+	@rm -rf $(GLAD_TMP)
+	@echo "Local GLAD setup complete."
 
 # Build target
 $(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS) $(shell pkg-config --static --libs glfw3)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS) $(LDFLAGS)
 
 # Compile C++ files
-main.o: main.cpp glad.h
-	$(CXX) $(CXXFLAGS) -c main.cpp -o main.o $(shell pkg-config --cflags glfw3)
+main.o: main.cpp
+	$(CXX) $(CXXFLAGS) -c main.cpp -o main.o
 
-# Compile C files
-glad.o: glad.c glad.h khrplatform.h
-	$(CXX) $(CXXFLAGS) -c glad.c -o glad.o $(shell pkg-config --cflags glfw3)
+# Compile GLAD C file
+glad.o: $(LOCAL_SRC)/glad.c
+	$(CXX) $(CXXFLAGS) -c $(LOCAL_SRC)/glad.c -o glad.o
 
 clean:
-	rm -f $(OBJECTS) $(TARGET) glad.c glad.h khrplatform.h
+	rm -rf $(OBJECTS) $(TARGET) $(LOCAL_INCLUDE) $(LOCAL_SRC) $(PKGCONFIG_DIR)
