@@ -40,6 +40,8 @@ else
     endif
 endif
 
+all:	static
+
 # === Asset embedding ===
 # Automatically convert globe.jpg → globe_jpg.h for static inclusion
 $(EMBEDDED): $(ASSETS)
