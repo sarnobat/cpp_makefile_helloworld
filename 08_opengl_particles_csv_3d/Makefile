@@ -44,6 +44,7 @@ $(BIN): $(CPPSRC)
 # === Run target ===
 run: $(BIN)
 	./$(BIN) data.csv
+	echo "Try running rust/20_exif_to_csv/"
 
 # === Clean target ===
 clean:
