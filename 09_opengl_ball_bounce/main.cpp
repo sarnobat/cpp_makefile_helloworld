@@ -176,26 +176,39 @@ int main() {
     glUseProgram(shaderProgram);
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, &proj[0][0]);
 
-    // --- Main loop ---
-    while (!glfwWindowShouldClose(window)) {
-        vy += g * dt;
-        y += vy * dt;
-        if (y < -9.0f) { y = -9.0f; vy = -vy * 0.9f; }
+	// --- Main loop ---
+	while (!glfwWindowShouldClose(window)) {
 
-        glClear(GL_COLOR_BUFFER_BIT);
+		// -------------------------------
+		// BALL PHYSICS UPDATE
+		// -------------------------------
+		vy += g * dt;        // Apply gravity
+		y  += vy * dt;       // Update vertical position
+		if (y < -9.0f) {     // Bounce on the floor
+			y = -9.0f;
+			vy = -vy * 0.9f; // dampen velocity
+		}
 
-        glUseProgram(shaderProgram);
-        glUniform1f(yOffsetLoc, y);
+		// -------------------------------
+		// RENDER BALL
+		// -------------------------------
+		glClear(GL_COLOR_BUFFER_BIT);
 
-        glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, NUM_SEGMENTS + 2);
-        glBindVertexArray(0);
+		glUseProgram(shaderProgram);
+		glUniform1f(yOffsetLoc, y); // Send current y position to shader
 
-        checkGLError("Draw");
+		glBindVertexArray(vao);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, NUM_SEGMENTS + 2);
+		glBindVertexArray(0);
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
+		checkGLError("Draw");
+
+		// -------------------------------
+		// FRAME SWAP & EVENT POLL
+		// -------------------------------
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
 
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
