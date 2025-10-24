@@ -1,9 +1,6 @@
 # -------------------------------
 # Bouncing Ball OpenGL Makefile
 # -------------------------------
-# GLAD zip downloaded from:
-# https://glad.dav1d.de/generated/tmpl_uuw6hqglad/
-# -------------------------------
 
 CXX := g++
 CXXFLAGS := -std=c++17 -O2 -Wall
@@ -31,7 +28,13 @@ TARGET := bouncing_ball
 # -------------------------------
 # Default target
 # -------------------------------
-all: setup $(TARGET)
+all: show_glad_origin setup $(TARGET)
+
+# -------------------------------
+# Show GLAD zip origin in output
+# -------------------------------
+show_glad_origin:
+	@echo "GLAD zip used for this build: https://glad.dav1d.de/generated/tmpl_uuw6hqglad/"
 
 # -------------------------------
 # Setup dependencies
@@ -79,4 +82,4 @@ $(TARGET): $(OBJ)
 clean:
 	rm -f $(OBJ) $(TARGET)
 
-.PHONY: all setup install_homebrew_libs glad clean
+.PHONY: all show_glad_origin setup install_homebrew_libs glad clean
