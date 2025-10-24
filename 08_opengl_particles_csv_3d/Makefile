@@ -4,6 +4,9 @@ CXXFLAGS = -Wall -Wextra -O2 -std=c++17
 LDFLAGS  =
 BIN      = main
 CPPSRC   = main.cpp
+ASSETS   = globe.jpg
+EMBEDDED = globe_jpg.h
+EXTRA_HEADERS = stb_image.h $(EMBEDDED)
 
 # === Choose your toolkit ===
 # For classic GLUT code:
@@ -37,15 +40,43 @@ else
     endif
 endif
 
+# === Asset embedding ===
+# Automatically convert globe.jpg → globe_jpg.h for static inclusion
+$(EMBEDDED): $(ASSETS)
+	@echo "Embedding $< → $@"
+	xxd -i $< > $@
+
+# === stb_image header (self-contained single-file library) ===
+stb_image.h:
+	@echo "Fetching stb_image.h..."
+	curl -s -L -o stb_image.h https://raw.githubusercontent.com/nothings/stb/master/stb_image.h
+
 # === Build target ===
-$(BIN): $(CPPSRC)
+$(BIN): $(CPPSRC) $(EXTRA_HEADERS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 # === Run target ===
 run: $(BIN)
-	./$(BIN) data.csv
-	echo "Try running rust/20_exif_to_csv/"
+	./$(BIN) data.csv --map &
+	@echo "Try running on /Volumes/git/github/depot_parent/rust/20_exif_to_csv/out.csv"
 
 # === Clean target ===
 clean:
-	rm -f $(BIN)
+	rm -f $(BIN) $(EMBEDDED)
+
+# === Static build prerequisites ===
+staticinit:
+	@echo "Fetching stb_image.h..."
+	curl -s -L -o stb_image.h https://raw.githubusercontent.com/nothings/stb/master/stb_image.h
+	@echo "Embedding globe.jpg as C array..."
+	xxd -i globe.jpg > globe_jpg.h
+	@echo "Done. Ready for static build."
+
+# === Static build target ===
+static: staticinit
+	$(CXX) $(CXXFLAGS) -o $(BIN) $(CPPSRC) \
+		-I$(GLEW_INCLUDE) -I$(GLFW_INCLUDE) -I. \
+		-L$(GLEW_LIB) -lGLEW -L$(GLFW_LIB) -lglfw \
+		-framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+
+.PHONY: clean run static
