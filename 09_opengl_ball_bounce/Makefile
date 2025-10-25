@@ -88,6 +88,5 @@ $(TARGET): $(OBJ)
 
 clean:
 	rm -f $(OBJ) $(TARGET)
-	@if [ -d external/glfw ]; then echo "Cleaning GLFW build..."; rm -rf external/glfw; fi
 
 .PHONY: all show_glad_origin setup install_homebrew_libs glad glfw_static clean
