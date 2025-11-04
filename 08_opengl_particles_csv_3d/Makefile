@@ -86,4 +86,6 @@ static: staticinit
 		$(GLEW_LIB)/libGLEW.a $(GLFW_LIB)/libglfw3.a \
 		-framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
 
+run:
+	./main --map exif.csv
 .PHONY: clean run static
