@@ -1,4 +1,5 @@
-## Verdict: rust not possible, C++ is fine bloat-wise compared to C. OpenGL, while deprecated from Mac, is much easier than Metal or Vulkan. So I'm forced to use it for data visualization.
+## Verdict: rust not possible, C++ is fine bloat-wise compared to C. OpenGL, while deprecated from Mac, is much easier than Metal or Vulkan. So I'm forced to use it for data visualization. I've done whatever static linking is possible on Mac OS. But Mac OS doesn't allow you to link to some core libraries
+
 
 
 # Compiler and flags
