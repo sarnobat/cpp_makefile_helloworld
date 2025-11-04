@@ -1,0 +1,102 @@
+# Compiler and flags
+CXX      = c++
+CXXFLAGS = -Wall -Wextra -O2 -std=c++17
+LDFLAGS  =
+BIN      = main
+CPPSRC   = main.cpp
+ASSETS   = globe.jpg
+EMBEDDED = globe_jpg.h
+EXTRA_HEADERS = stb_image.h $(EMBEDDED)
+
+# === Choose your toolkit ===
+# For classic GLUT code:
+USE_GLUT = 0
+# For modern GLFW + GLEW code:
+# USE_GLUT = 0
+
+# === Homebrew fallback paths (for macOS) ===
+BREW_PREFIX = $(shell brew --prefix)
+GLEW_INCLUDE = $(BREW_PREFIX)/include
+GLEW_LIB     = $(BREW_PREFIX)/lib
+GLFW_INCLUDE = $(BREW_PREFIX)/include
+GLFW_LIB     = $(BREW_PREFIX)/lib
+
+# === Flags setup ===
+ifeq ($(USE_GLUT),1)
+    ifneq ($(shell pkg-config --exists glew && echo yes),yes)
+        CXXFLAGS += -I$(GLEW_INCLUDE)
+        LDFLAGS  += -L$(GLEW_LIB) -lGLEW -framework GLUT -framework OpenGL
+    else
+        CXXFLAGS += $(shell pkg-config --cflags glew)
+        LDFLAGS  += $(shell pkg-config --libs glew) -framework GLUT -framework OpenGL
+    endif
+else
+    ifneq ($(shell pkg-config --exists glew glfw3 && echo yes),yes)
+        CXXFLAGS += -I$(GLEW_INCLUDE) -I$(GLFW_INCLUDE)
+        LDFLAGS  += -L$(GLEW_LIB) -lGLEW -L$(GLFW_LIB) -lglfw -framework OpenGL
+    else
+        CXXFLAGS += $(shell pkg-config --cflags glew glfw3)
+        LDFLAGS  += $(shell pkg-config --libs glew glfw3) -framework OpenGL
+    endif
+endif
+
+all: run
+
+# === Asset embedding ===
+$(EMBEDDED): $(ASSETS)
+	@echo "Embedding $< → $@"
+	xxd -i $< > $@
+
+# === stb_image header ===
+stb_image.h:
+	@echo "Fetching stb_image.h..."
+	curl -s -L -o stb_image.h https://raw.githubusercontent.com/nothings/stb/master/stb_image.h
+
+# === Build target ===
+$(BIN): $(CPPSRC) $(EXTRA_HEADERS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
+# === Run target ===
+run: $(BIN)
+	./$(BIN) data.csv 2>/dev/null || @echo ""
+	@echo "Try running on ./data.csv, i.e. ./$(BIN) --map data.csv"
+
+# === Clean target ===
+clean:
+	rm -f $(BIN) $(EMBEDDED)
+
+# === Static build prerequisites ===
+staticinit:
+	@echo "Fetching stb_image.h..."
+	curl -s -L -o stb_image.h https://raw.githubusercontent.com/nothings/stb/master/stb_image.h
+	@echo "Embedding globe.jpg as C array..."
+	xxd -i globe.jpg > globe_jpg.h
+	@echo "Done. Ready for static build."
+
+# === Static build target ===
+static: staticinit
+	$(CXX) $(CXXFLAGS) -o $(BIN) $(CPPSRC) \
+		-I$(GLEW_INCLUDE) -I$(GLFW_INCLUDE) -I. \
+		-L$(GLEW_LIB) -lGLEW -L$(GLFW_LIB) -lglfw \
+		-framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+
+# === Bundle target ===
+bundle:
+	# Install dylibbundler if missing
+	brew list dylibbundler >/dev/null 2>&1 || brew install dylibbundler
+	# Define directories
+	APP_DIR=MyApp.app; \
+	MACOS_DIR=$$APP_DIR/Contents/MacOS; \
+	FRAMEWORKS_DIR=$$APP_DIR/Contents/Frameworks; \
+	RESOURCES_DIR=$$APP_DIR/Contents/Resources; \
+	mkdir -p "$$MACOS_DIR" "$$FRAMEWORKS_DIR" "$$RESOURCES_DIR"; \
+	# Copy binary
+	cp "$(BIN)" "$$MACOS_DIR/MyApp"; \
+	chmod +x "$$MACOS_DIR/MyApp"; \
+	# Copy data
+	cp data.csv "$$RESOURCES_DIR/"; \
+	# Use dylibbundler to copy dynamic libraries
+	dylibbundler -b -x "$$MACOS_DIR/MyApp" \
+		-d "$$FRAMEWORKS_DIR" -p @executable_path/../Frameworks -s
+
+.PHONY: clean run static staticinit bundle
