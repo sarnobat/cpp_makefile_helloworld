@@ -25,7 +25,7 @@ GLFW_LIB     = $(BREW_PREFIX)/lib
 ifeq ($(USE_GLUT),1)
     ifneq ($(shell pkg-config --exists glew && echo yes),yes)
         CXXFLAGS += -I$(GLEW_INCLUDE)
-        LDFLAGS  += -L$(GLEW_LIB) -lGLEW -framework GLUT -framework OpenGL
+        LDFLAGS  += -L$(GLEW_LIB) $(GLEW_LIB)/libGLEW.a -framework GLUT -framework OpenGL
     else
         CXXFLAGS += $(shell pkg-config --cflags glew)
         LDFLAGS  += $(shell pkg-config --libs glew) -framework GLUT -framework OpenGL
@@ -33,7 +33,7 @@ ifeq ($(USE_GLUT),1)
 else
     ifneq ($(shell pkg-config --exists glew glfw3 && echo yes),yes)
         CXXFLAGS += -I$(GLEW_INCLUDE) -I$(GLFW_INCLUDE)
-        LDFLAGS  += -L$(GLEW_LIB) -lGLEW -L$(GLFW_LIB) -lglfw -framework OpenGL
+        LDFLAGS  += $(GLEW_LIB)/libGLEW.a $(GLFW_LIB)/libglfw3.a -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
     else
         CXXFLAGS += $(shell pkg-config --cflags glew glfw3)
         LDFLAGS  += $(shell pkg-config --libs glew glfw3) -framework OpenGL
@@ -79,7 +79,7 @@ staticinit:
 static: staticinit
 	$(CXX) $(CXXFLAGS) -o $(BIN) $(CPPSRC) \
 		-I$(GLEW_INCLUDE) -I$(GLFW_INCLUDE) -I. \
-		-L$(GLEW_LIB) -lGLEW -L$(GLFW_LIB) -lglfw \
+		$(GLEW_LIB)/libGLEW.a $(GLFW_LIB)/libglfw3.a \
 		-framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
 
 .PHONY: clean run static
