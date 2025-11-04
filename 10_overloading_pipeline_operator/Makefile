@@ -12,6 +12,7 @@ $(TARGET): $(SRC)
 
 run:
 	seq 990 1010 | ./pipeline
+	@echo "(We only print numbers with more than 3 digits)"
 
 clean:
 	rm -f $(TARGET)
