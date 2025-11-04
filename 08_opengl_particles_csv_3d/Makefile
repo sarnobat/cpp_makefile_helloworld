@@ -1,3 +1,6 @@
+## Verdict: rust not possible, C++ is fine bloat-wise compared to C. OpenGL, while deprecated from Mac, is much easier than Metal or Vulkan. So I'm forced to use it for data visualization.
+
+
 # Compiler and flags
 CXX      = c++
 CXXFLAGS = -Wall -Wextra -O2 -std=c++17
