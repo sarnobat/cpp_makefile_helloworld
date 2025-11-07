@@ -34,10 +34,11 @@ info:
 	@echo "Find My Friends Simulation - Quick Start"
 	@echo "========================================="
 	@echo ""
-	@echo "make run-server-ingest    make run-server-forward  make run-receiver      make run-clients
-	@echo "+-------------------+     +-------------------+    +--------------+     +---------------------------+
-	@echo "| server_ingest.cpp | --> | server_forward.cpp| => | receiver.cpp | --> |  client.cpp (client0..4)  |
-	@echo "+-------------------+     +-------------------+    +--------------+     +---------------------------+
+	@echo "\033[38;5;208m   make                      make                    make                      make\033[0m"
+	@echo "\033[38;5;208m   run-server-ingest          run-server-forward        run-receiver              run-clients\033[0m"
+	@echo "\033[38;5;208m   +-------------------+     +--------------------+    +--------------+    +--------------------------+\033[0m"
+	@echo "\033[38;5;208m   | server_ingest.cpp | --> | server_forward.cpp | -> | receiver.cpp | -> | client.cpp (client0..4)  |\033[0m"
+	@echo "\033[38;5;208m   +-------------------+     +--------------------+    +--------------+    +--------------------------+\033[0m"
 	@echo ""
 	@echo "Run the simulation using the following commands in ANY order:"
 	@echo ""
@@ -53,8 +54,9 @@ info:
 	@echo ""
 	@echo "Alternatively, use this one-click launcher:"
 	@echo ""
-	@echo "sh iterm_4panes.sh"
+	@echo "\033[1;32msh iterm_4panes.sh\033[0m"
 	@echo ""
+
 	@echo "========================================="
 
 # =====================
