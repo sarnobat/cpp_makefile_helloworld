@@ -46,7 +46,7 @@ info:
 	@echo "  2) Split vertically:   Cmd + Shift + D"
 	@echo "  3) Broadcast input to all panes in tab: Cmd + Option + I (and again to turn off)"
 	@echo ""
-	@echo "Alternatively, do this then paste the commands individually"
+	@echo "Alternatively, use this one-click launcher:"
 	@echo ""
 	@echo "sh iterm_4panes.sh"
 	@echo ""
