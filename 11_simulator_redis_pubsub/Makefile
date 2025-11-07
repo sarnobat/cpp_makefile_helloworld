@@ -36,7 +36,7 @@ info:
 	@echo ""
 	@echo "(inspired by Systems Interview Vol II book, ch 2)"
 	@echo ""
-	@echo "\033[38;5;208m   make                      make                    make                      make\033[0m"
+	@echo "\033[38;5;208m          make                      make                    make                      make\033[0m"
 	@echo "\033[38;5;208m   run-server-ingest          run-server-forward        run-receiver              run-clients\033[0m"
 	@echo "\033[38;5;208m   +-------------------+     +--------------------+    +--------------+    +--------------------------+\033[0m"
 	@echo "\033[38;5;208m   | server_ingest.cpp | --> | server_forward.cpp | -> | receiver.cpp | -> | client.cpp (client0..4)  |\033[0m"
@@ -57,7 +57,7 @@ info:
 	@echo "Alternatively, use this one-click launcher:"
 	@echo ""
 	@echo "\033[1;32msh iterm_4panes.sh\033[0m"
-	@echo "(don't forget to killall client when done)"
+	@echo "\033[32mkillall client\033[0m"
 	@echo ""
 
 	@echo "========================================="
