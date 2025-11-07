@@ -34,6 +34,8 @@ info:
 	@echo "Find My Friends Simulation - Quick Start"
 	@echo "========================================="
 	@echo ""
+	@echo "(inspired by Systems Interview Vol II book, ch 2)"
+	@echo ""
 	@echo "\033[38;5;208m   make                      make                    make                      make\033[0m"
 	@echo "\033[38;5;208m   run-server-ingest          run-server-forward        run-receiver              run-clients\033[0m"
 	@echo "\033[38;5;208m   +-------------------+     +--------------------+    +--------------+    +--------------------------+\033[0m"
