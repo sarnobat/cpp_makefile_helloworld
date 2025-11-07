@@ -55,6 +55,7 @@ info:
 	@echo "Alternatively, use this one-click launcher:"
 	@echo ""
 	@echo "\033[1;32msh iterm_4panes.sh\033[0m"
+	@echo "(don't forget to killall client when done)"
 	@echo ""
 
 	@echo "========================================="
@@ -63,6 +64,9 @@ info:
 # Main targets
 # =====================
 all: deps dirs client server_ingest server_forward receiver
+
+code:
+	code src/*cpp
 
 dirs:
 	mkdir -p $(BIN) $(LOGDIR)
@@ -110,15 +114,15 @@ receiver:
 # ---------------------
 run-clients: start-redis client
 	@echo "Starting 5 clients (background). Logs -> $(LOGDIR)/clientN.log"
-	nohup stdbuf -oL -eL $(BIN)/client 0 &> $(LOGDIR)/client0.log &
+	stdbuf -oL -eL $(BIN)/client 0 &> $(LOGDIR)/client0.log &
 	sleep 0.2
-	nohup stdbuf -oL -eL $(BIN)/client 1 &> $(LOGDIR)/client1.log &
+	stdbuf -oL -eL $(BIN)/client 1 &> $(LOGDIR)/client1.log &
 	sleep 0.2
-	nohup stdbuf -oL -eL $(BIN)/client 2 &> $(LOGDIR)/client2.log &
+	stdbuf -oL -eL $(BIN)/client 2 &> $(LOGDIR)/client2.log &
 	sleep 0.2
-	nohup stdbuf -oL -eL $(BIN)/client 3 &> $(LOGDIR)/client3.log &
+	stdbuf -oL -eL $(BIN)/client 3 &> $(LOGDIR)/client3.log &
 	sleep 0.2
-	nohup stdbuf -oL -eL $(BIN)/client 4 &> $(LOGDIR)/client4.log &
+	stdbuf -oL -eL $(BIN)/client 4 &> $(LOGDIR)/client4.log &
 	@echo "Clients started."
 
 run-server-ingest: start-redis server_ingest

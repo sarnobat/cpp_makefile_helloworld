@@ -28,12 +28,12 @@ int main(int argc, char** argv) {
 
     signal(SIGINT, signal_handler);
 
-    cpp_redis::client client;
+    cpp_redis::client redis_client;
 
     // Retry connecting to Redis until successful
     while (running) {
         try {
-            client.connect("127.0.0.1", 6379);
+            redis_client.connect("127.0.0.1", 6379);
             std::cout << "[client" << id << "] Connected to Redis." << std::endl;
             std::cout.flush();
             break;
@@ -51,8 +51,11 @@ int main(int argc, char** argv) {
         msg << id << "," << x << "," << y;
 
         try {
-            client.publish("locations_raw", msg.str());
-            client.commit();
+            ///
+            /// Send the location update
+            ///
+            redis_client.publish("locations_raw", msg.str());
+            redis_client.commit();
             std::cout << "[client" << id << "] Published: " << msg.str() << std::endl;
             std::cout.flush();
         } catch (const cpp_redis::redis_error &e) {
@@ -60,12 +63,14 @@ int main(int argc, char** argv) {
             std::cerr.flush();
         }
 
+        // simulate the person moving
         x += 0.1f;
         y += 0.1f;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        // Wait a few seconds before sending another update
+        std::this_thread::sleep_for(std::chrono::seconds(5));
     }
 
-    client.disconnect();
+    redis_client.disconnect();
     std::cout << "[client" << id << "] Shutting down." << std::endl;
     std::cout.flush();
     return 0;
