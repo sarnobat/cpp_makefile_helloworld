@@ -1,3 +1,7 @@
+////
+//// Friends sending their latest status
+////
+
 #include <cpp_redis/cpp_redis>
 #include <iostream>
 #include <sstream>

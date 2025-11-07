@@ -1,3 +1,8 @@
+////
+//// Me receiving location updates from my friends from a server that aggregates them
+////
+
+
 // receiver.cpp
 #include <cpp_redis/cpp_redis>
 #include <iostream>

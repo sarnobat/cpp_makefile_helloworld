@@ -34,6 +34,11 @@ info:
 	@echo "Find My Friends Simulation - Quick Start"
 	@echo "========================================="
 	@echo ""
+	@echo "make run-server-ingest    make run-server-forward  make run-receiver      make run-clients
+	@echo "+-------------------+     +-------------------+    +--------------+     +---------------------------+
+	@echo "| server_ingest.cpp | --> | server_forward.cpp| => | receiver.cpp | --> |  client.cpp (client0..4)  |
+	@echo "+-------------------+     +-------------------+    +--------------+     +---------------------------+
+	@echo ""
 	@echo "Run the simulation using the following commands in ANY order:"
 	@echo ""
 	@echo "  make run-server-ingest       # logs to console"
