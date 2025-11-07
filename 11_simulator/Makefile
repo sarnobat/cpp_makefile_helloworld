@@ -29,6 +29,7 @@ LIBS     = -lcpp_redis -ltacopie
 # Info / run commands (order-independent)
 # ---------------------
 info:
+
 	@echo "========================================="
 	@echo "Find My Friends Simulation - Quick Start"
 	@echo "========================================="
@@ -40,8 +41,16 @@ info:
 	@echo "  make run-receiver            # logs to console"
 	@echo "  make run-clients             # logs to logs/client0.log .. logs/client4.log"
 	@echo ""
+	@echo "iTerm2 tips for multiple panes:"
+	@echo "  1) Split horizontally: Cmd + D"
+	@echo "  2) Split vertically:   Cmd + Shift + D"
+	@echo "  3) Broadcast input to all panes in tab: Cmd + Option + I (and again to turn off)"
+	@echo ""
+	@echo "Alternatively, do this then paste the commands individually"
+	@echo ""
+	@echo "sh iterm_4panes.sh"
+	@echo ""
 	@echo "========================================="
-
 
 # =====================
 # Main targets
