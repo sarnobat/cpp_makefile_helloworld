@@ -20,21 +20,20 @@ std::string extractAllText(XMLNode* node) {
 }
 
 // Recursively find all NodeLabel elements under an element
-void collectNodeLabels(XMLElement* elem) {
+void printNodeLabels(XMLElement* elem, const std::string& node_id) {
     if (!elem) return;
 
     const char* name = elem->Name();
     if (name && std::string(name).find("NodeLabel") != std::string::npos) {
         std::string text = extractAllText(elem);
         if (!text.empty()) {
-            std::cout << "NodeLabel: " << text << "\n";
+            std::cout << node_id << "," << text << "\n";
         }
     }
 
-    // Recurse into **all children**, not just first-level
     for (XMLNode* child = elem->FirstChild(); child; child = child->NextSibling()) {
         if (XMLElement* childElem = child->ToElement()) {
-            collectNodeLabels(childElem);
+            printNodeLabels(childElem, node_id);
         }
     }
 }
@@ -51,16 +50,19 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    XMLElement* root = doc.RootElement(); // <graphml>
+    XMLElement* root = doc.RootElement();
     if (!root) {
         std::cerr << "Invalid GraphML file\n";
         return 1;
     }
 
-    // Iterate all <node> elements under <graph>
+    std::cout << "node_id,label\n";
+
     for (XMLElement* graphElem = root->FirstChildElement("graph"); graphElem; graphElem = graphElem->NextSiblingElement("graph")) {
         for (XMLElement* nodeElem = graphElem->FirstChildElement("node"); nodeElem; nodeElem = nodeElem->NextSiblingElement("node")) {
-            collectNodeLabels(nodeElem); // fully recurse inside the node
+            const char* id = nodeElem->Attribute("id");
+            if (!id) continue;
+            printNodeLabels(nodeElem, id); // print each label individually
         }
     }
 
