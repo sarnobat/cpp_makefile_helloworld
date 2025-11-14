@@ -2,19 +2,37 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <map>
 
 using namespace tinyxml2;
 
 struct Node {
     std::string id;
-    std::string label;
+    std::string label; // text from <y:NodeLabel>
 };
 
 struct Edge {
     std::string source;
     std::string target;
 };
+
+// Recursively find the first NodeLabel element and return its text
+std::string findNodeLabel(XMLElement* elem) {
+    if (!elem) return "";
+
+    const char* name = elem->Name();
+    if (name && std::string(name).find("NodeLabel") != std::string::npos) {
+        if (elem->GetText())
+            return elem->GetText();
+    }
+
+    // Recurse on children
+    for (XMLElement* child = elem->FirstChildElement(); child; child = child->NextSiblingElement()) {
+        std::string text = findNodeLabel(child);
+        if (!text.empty()) return text;
+    }
+
+    return "";
+}
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -36,18 +54,17 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    // --- Extract graph-level Description ---
+    // --- Graph-level description ---
     std::string graph_description;
     for (XMLElement* data = root->FirstChildElement("data"); data; data = data->NextSiblingElement("data")) {
         const char* key = data->Attribute("key");
-        if (key && std::string(key) == "d0") { // d0 = Description
-            if (data->GetText())
-                graph_description = data->GetText();
+        if (key && std::string(key) == "d0" && data->GetText()) {
+            graph_description = data->GetText();
             break;
         }
     }
 
-    // --- Find the <graph> element ---
+    // --- Find <graph> element ---
     XMLElement* graphElem = root->FirstChildElement("graph");
     if (!graphElem) {
         std::cerr << "No <graph> element found\n";
@@ -63,13 +80,12 @@ int main(int argc, char** argv) {
         n.id = id;
         n.label = "";
 
-        // Check all <data> elements for <y:ShapeNode>/<y:NodeLabel>
+        // Iterate over all <data> elements
         for (XMLElement* data = nodeElem->FirstChildElement("data"); data; data = data->NextSiblingElement("data")) {
-            XMLElement* shapeNode = data->FirstChildElement("y:ShapeNode");
-            if (!shapeNode) continue;
-            XMLElement* nodeLabel = shapeNode->FirstChildElement("y:NodeLabel");
-            if (nodeLabel && nodeLabel->GetText()) {
-                n.label = nodeLabel->GetText();
+            std::string text = findNodeLabel(data);
+            if (!text.empty()) {
+                n.label = text;
+                break; // take first label found
             }
         }
 
