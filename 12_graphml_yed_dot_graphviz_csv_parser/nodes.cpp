@@ -1,52 +1,49 @@
 #include <tinyxml2.h>
 #include <iostream>
 #include <string>
+#include <getopt.h>
 
 using namespace tinyxml2;
 
-// Recursively extract all text inside an XMLNode
-std::string extractAllText(XMLNode* node) {
-    if (!node) return "";
-
-    std::string text;
-    for (XMLNode* child = node->FirstChild(); child; child = child->NextSibling()) {
-        if (child->ToText()) {
-            text += child->Value();
-        } else {
-            text += extractAllText(child);
-        }
-    }
-    return text;
-}
-
-// Recursively find all NodeLabel elements under an element
-void printNodeLabels(XMLElement* elem, const std::string& node_id) {
-    if (!elem) return;
-
-    const char* name = elem->Name();
-    if (name && std::string(name).find("NodeLabel") != std::string::npos) {
-        std::string text = extractAllText(elem);
-        if (!text.empty()) {
-            std::cout << node_id << "," << text << "\n";
-        }
-    }
-
-    for (XMLNode* child = elem->FirstChild(); child; child = child->NextSibling()) {
-        if (XMLElement* childElem = child->ToElement()) {
-            printNodeLabels(childElem, node_id);
-        }
-    }
+// Return the full ID or just the leaf component if short_ids is true
+std::string leafID(const std::string& id, bool short_ids) {
+    if (!short_ids) return id;
+    auto pos = id.rfind("::");
+    if (pos != std::string::npos) return id.substr(pos + 2);
+    return id;
 }
 
 int main(int argc, char** argv) {
-    if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " file.graphml\n";
+    bool short_ids = false;
+
+    // Define long options for getopt_long
+    static struct option long_options[] = {
+        {"short", no_argument, 0, 's'},
+        {0, 0, 0, 0}
+    };
+
+    // Parse options
+    int opt;
+    int option_index = 0;
+    while ((opt = getopt_long(argc, argv, "s", long_options, &option_index)) != -1) {
+        switch (opt) {
+            case 's': short_ids = true; break;
+            default:
+                std::cerr << "Usage: " << argv[0] << " [--short] file.graphml\n";
+                return 1;
+        }
+    }
+
+    if (optind >= argc) {
+        std::cerr << "Missing GraphML file argument\n";
         return 1;
     }
 
+    std::string filename = argv[optind];
+
     XMLDocument doc;
-    if (doc.LoadFile(argv[1]) != XML_SUCCESS) {
-        std::cerr << "Failed to load XML file\n";
+    if (doc.LoadFile(filename.c_str()) != XML_SUCCESS) {
+        std::cerr << "Failed to load XML file: " << filename << "\n";
         return 1;
     }
 
@@ -56,13 +53,15 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    std::cout << "node_id,label\n";
+    std::cout << "source,target\n";
 
     for (XMLElement* graphElem = root->FirstChildElement("graph"); graphElem; graphElem = graphElem->NextSiblingElement("graph")) {
-        for (XMLElement* nodeElem = graphElem->FirstChildElement("node"); nodeElem; nodeElem = nodeElem->NextSiblingElement("node")) {
-            const char* id = nodeElem->Attribute("id");
-            if (!id) continue;
-            printNodeLabels(nodeElem, id); // print each label individually
+        for (XMLElement* edgeElem = graphElem->FirstChildElement("edge"); edgeElem; edgeElem = edgeElem->NextSiblingElement("edge")) {
+            const char* source = edgeElem->Attribute("source");
+            const char* target = edgeElem->Attribute("target");
+            if (!source || !target) continue;
+
+            std::cout << leafID(source, short_ids) << "," << leafID(target, short_ids) << "\n";
         }
     }
 
