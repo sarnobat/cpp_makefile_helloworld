@@ -6,10 +6,11 @@ LDLIBS   = -ltinyxml2
 TARGET = graphml_reader
 SRC = main.cpp
 
-run:
-	./graphml_reader /Volumes/git/sarnobat.git/yed/trail_lisp.graphml
 
 all: deps $(TARGET)	run
+
+run:
+	./graphml_reader /Volumes/git/sarnobat.git/yed/trail_lisp.graphml
 
 .PHONY: deps
 deps:
