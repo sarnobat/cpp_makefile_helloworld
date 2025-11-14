@@ -10,7 +10,8 @@ SRC = main.cpp
 all: deps $(TARGET)	run
 
 run:
-	./graphml_reader /Volumes/git/sarnobat.git/yed/trail_lisp.graphml
+	./graphml_reader 		/Volumes/git/sarnobat.git/yed/trail_lisp.graphml
+	./graphml_reader --short	/Volumes/git/sarnobat.git/yed/trail_lisp.graphml
 
 .PHONY: deps
 deps:
