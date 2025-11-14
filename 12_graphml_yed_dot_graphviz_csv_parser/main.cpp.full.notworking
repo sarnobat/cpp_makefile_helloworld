@@ -1,0 +1,136 @@
+#include <tinyxml2.h>
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace tinyxml2;
+
+// --- Structures ---
+struct Node {
+    std::string id;
+    std::string label;
+};
+
+struct Edge {
+    std::string source;
+    std::string target;
+};
+
+// --- Helper functions ---
+
+// Recursively extract all text inside an XMLNode (ignores child tags)
+std::string extractAllText(XMLNode* node) {
+    if (!node) return "";
+
+    std::string text;
+    for (XMLNode* child = node->FirstChild(); child; child = child->NextSibling()) {
+        if (child->ToText()) {
+            text += child->Value();
+        } else {
+            text += extractAllText(child);
+        }
+    }
+    return text;
+}
+
+// Recursively find all <NodeLabel> elements and concatenate their text
+void collectNodeLabels(XMLElement* elem, std::string &out) {
+    if (!elem) return;
+
+    const char* name = elem->Name();
+    if (name && std::string(name).find("NodeLabel") != std::string::npos) {
+        out += extractAllText(elem);
+        out += " "; // optional separator
+    }
+
+    for (XMLElement* child = elem->FirstChildElement(); child; child = child->NextSiblingElement()) {
+        collectNodeLabels(child, out);
+    }
+}
+
+// --- Main ---
+int main(int argc, char** argv) {
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " file.graphml\n";
+        return 1;
+    }
+
+    const char* filename = argv[1];
+
+    XMLDocument doc;
+    if (doc.LoadFile(filename) != XML_SUCCESS) {
+        std::cerr << "Failed to load XML file: " << filename << "\n";
+        return 1;
+    }
+
+    XMLElement* root = doc.RootElement(); // <graphml>
+    if (!root) {
+        std::cerr << "Invalid GraphML file\n";
+        return 1;
+    }
+
+    // --- Graph description from <data key="d0"> ---
+    std::string graph_description;
+    for (XMLElement* data = root->FirstChildElement("data"); data; data = data->NextSiblingElement("data")) {
+        const char* key = data->Attribute("key");
+        if (key && std::string(key) == "d0" && data->GetText()) {
+            graph_description = data->GetText();
+            break;
+        }
+    }
+
+    // --- Find <graph> element ---
+    XMLElement* graphElem = root->FirstChildElement("graph");
+    if (!graphElem) {
+        std::cerr << "No <graph> element found\n";
+        return 1;
+    }
+
+    // --- Parse nodes ---
+    std::vector<Node> nodes;
+    for (XMLElement* nodeElem = graphElem->FirstChildElement("node"); nodeElem; nodeElem = nodeElem->NextSiblingElement("node")) {
+        Node n;
+        const char* id = nodeElem->Attribute("id");
+        if (!id) continue;
+        n.id = id;
+        n.label = "";
+
+        for (XMLElement* data = nodeElem->FirstChildElement("data"); data; data = data->NextSiblingElement("data")) {
+            collectNodeLabels(data, n.label);
+        }
+
+        // trim trailing space
+        if (!n.label.empty() && n.label.back() == ' ') n.label.pop_back();
+
+        nodes.push_back(n);
+    }
+
+    // --- Parse edges ---
+    std::vector<Edge> edges;
+    for (XMLElement* edgeElem = graphElem->FirstChildElement("edge"); edgeElem; edgeElem = edgeElem->NextSiblingElement("edge")) {
+        Edge e;
+        const char* src = edgeElem->Attribute("source");
+        const char* tgt = edgeElem->Attribute("target");
+        if (!src || !tgt) continue;
+        e.source = src;
+        e.target = tgt;
+        edges.push_back(e);
+    }
+
+    // --- Output ---
+    std::cout << "Graph Description: " << (graph_description.empty() ? "(none)" : graph_description) << "\n\n";
+
+    std::cout << "Vertices (" << nodes.size() << "):\n";
+    for (const auto& n : nodes) {
+        std::cout << n.id;
+        if (!n.label.empty()) std::cout << " : " << n.label;
+        std::cout << "\n";
+    }
+
+    std::cout << "\nEdges (" << edges.size() << "):\n";
+    for (const auto& e : edges) {
+        std::cout << e.source << " -> " << e.target << "\n";
+    }
+
+    return 0;
+}
