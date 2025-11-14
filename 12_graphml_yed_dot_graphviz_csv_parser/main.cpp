@@ -1,17 +1,20 @@
+#include <tinyxml2.h>
 #include <iostream>
-#include <fstream>
 #include <string>
-#include <map>
-#include <set>
 #include <vector>
-
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/graphml.hpp>
-#include <boost/property_map/property_map.hpp>
-
-#include <tinyxml2.h> // Homebrew TinyXML2
+#include <map>
 
 using namespace tinyxml2;
+
+struct Node {
+    std::string id;
+    std::string label;
+};
+
+struct Edge {
+    std::string source;
+    std::string target;
+};
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -19,79 +22,85 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    const std::string filename = argv[1];
-    std::ifstream in(filename);
-    if (!in) {
-        std::cerr << "Cannot open file: " << filename << "\n";
-        return 1;
-    }
+    const char* filename = argv[1];
 
-    using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS>;
-    Graph g;
-
-    boost::dynamic_properties dp;
-
-    // Required: map node_id to vertex_index
-    dp.property("node_id", get(boost::vertex_index, g));
-
-    // --- Debug: scan GraphML for all <key> IDs ---
     XMLDocument doc;
-    if (doc.LoadFile(filename.c_str()) != XML_SUCCESS) {
-        std::cerr << "Failed to parse GraphML XML\n";
+    if (doc.LoadFile(filename) != XML_SUCCESS) {
+        std::cerr << "Failed to load XML file: " << filename << "\n";
         return 1;
     }
 
-    XMLElement* root = doc.RootElement();
+    XMLElement* root = doc.RootElement(); // <graphml>
     if (!root) {
         std::cerr << "Invalid GraphML file\n";
         return 1;
     }
 
+    // --- Extract graph-level Description ---
+    std::string graph_description;
+    for (XMLElement* data = root->FirstChildElement("data"); data; data = data->NextSiblingElement("data")) {
+        const char* key = data->Attribute("key");
+        if (key && std::string(key) == "d0") { // d0 = Description
+            if (data->GetText())
+                graph_description = data->GetText();
+            break;
+        }
+    }
+
+    // --- Find the <graph> element ---
     XMLElement* graphElem = root->FirstChildElement("graph");
     if (!graphElem) {
         std::cerr << "No <graph> element found\n";
         return 1;
     }
 
-    // Collect all key IDs
-    std::set<std::string> key_ids;
-    for (XMLElement* key = root->FirstChildElement("key"); key; key = key->NextSiblingElement("key")) {
-        const char* id = key->Attribute("id");
-        if (id) key_ids.insert(id);
+    // --- Parse nodes ---
+    std::vector<Node> nodes;
+    for (XMLElement* nodeElem = graphElem->FirstChildElement("node"); nodeElem; nodeElem = nodeElem->NextSiblingElement("node")) {
+        Node n;
+        const char* id = nodeElem->Attribute("id");
+        if (!id) continue;
+        n.id = id;
+        n.label = "";
+
+        // Check all <data> elements for <y:ShapeNode>/<y:NodeLabel>
+        for (XMLElement* data = nodeElem->FirstChildElement("data"); data; data = data->NextSiblingElement("data")) {
+            XMLElement* shapeNode = data->FirstChildElement("y:ShapeNode");
+            if (!shapeNode) continue;
+            XMLElement* nodeLabel = shapeNode->FirstChildElement("y:NodeLabel");
+            if (nodeLabel && nodeLabel->GetText()) {
+                n.label = nodeLabel->GetText();
+            }
+        }
+
+        nodes.push_back(n);
     }
 
-    std::cout << "Found key IDs in GraphML:\n";
-    for (const auto& k : key_ids) std::cout << "  " << k << "\n";
-
-    // Register dummy maps for all keys
-    std::map<std::string, std::string> dummy_map;
-    for (const auto& k : key_ids) {
-        dp.property(k, boost::make_assoc_property_map(dummy_map));
+    // --- Parse edges ---
+    std::vector<Edge> edges;
+    for (XMLElement* edgeElem = graphElem->FirstChildElement("edge"); edgeElem; edgeElem = edgeElem->NextSiblingElement("edge")) {
+        Edge e;
+        const char* src = edgeElem->Attribute("source");
+        const char* tgt = edgeElem->Attribute("target");
+        if (!src || !tgt) continue;
+        e.source = src;
+        e.target = tgt;
+        edges.push_back(e);
     }
 
-    std::cout << "Registered keys in dynamic_properties.\n";
+    // --- Output ---
+    std::cout << "Graph Description: " << (graph_description.empty() ? "(none)" : graph_description) << "\n\n";
 
-    // --- Read graphml ---
-    try {
-        boost::read_graphml(in, g, dp);
-    } catch (const std::exception& e) {
-        std::cerr << "GraphML parse error (ignored): " << e.what() << "\n";
+    std::cout << "Vertices (" << nodes.size() << "):\n";
+    for (const auto& n : nodes) {
+        std::cout << n.id;
+        if (!n.label.empty()) std::cout << " : " << n.label;
+        std::cout << "\n";
     }
 
-    // --- Debug output ---
-    std::cout << "Vertices: " << num_vertices(g) << "\n";
-    std::cout << "Edges: " << num_edges(g) << "\n";
-
-    // Print vertices
-    std::cout << "Vertices list:\n";
-    for (auto v : boost::make_iterator_range(vertices(g))) {
-        std::cout << "v " << v << "\n";
-    }
-
-    // Print edges
-    std::cout << "Edges list:\n";
-    for (auto e : boost::make_iterator_range(edges(g))) {
-        std::cout << source(e, g) << " -> " << target(e, g) << "\n";
+    std::cout << "\nEdges (" << edges.size() << "):\n";
+    for (const auto& e : edges) {
+        std::cout << e.source << " -> " << e.target << "\n";
     }
 
     return 0;
