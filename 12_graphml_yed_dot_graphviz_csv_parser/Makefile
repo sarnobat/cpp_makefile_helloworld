@@ -4,7 +4,8 @@ CXX = clang++
 CXXFLAGS = -std=c++17 -Wall -Wextra -g -I/opt/homebrew/include
 LDFLAGS = -L/opt/homebrew/lib -ltinyxml2
 
-GRAPHML = /Volumes/git/sarnobat.git/yed/trail_lisp.graphml
+# GRAPHML = /Volumes/git/sarnobat.git/yed/trail_lisp.graphml
+GRAPHML = '/Volumes/git/sarnobat.git/yed/disruptive innovation cannibalization.graphml'
 
 NODES = nodes
 EDGES = edges
@@ -47,6 +48,8 @@ run: all
 	@echo ""
 	@echo "=== DOT graph (--short IDs) ==="
 	./$(CSV2DOT) nodes_short.csv edges_short.csv | tee graph_short.dot
+	dot -Tpng  graph_short.dot > graph_short.png
+	open graph_short.png
 	@echo "DOT output written to graph_short.dot"
 	@echo ""
 	@echo "=== Graph::Easy ASCII rendering ==="
