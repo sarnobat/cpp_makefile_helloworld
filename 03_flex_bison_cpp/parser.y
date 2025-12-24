@@ -36,6 +36,13 @@
     // yylex() arguments are defined in parser.y
     static EzAquarii::Parser::symbol_type yylex(EzAquarii::Scanner &scanner) {
         cout << "SRIDHAR 4 - scanner waiting for next token)";
+        std::fprintf(stderr,
+    "\033[38;5;45m[trace]\033[0m "
+    "\033[38;5;220m%10s:%-5d\033[0m "
+    "\033[38;5;82m%32s()\033[0m "
+    "\033[38;5;202mSRIDHAR\033[0m: 4 - scanner waiting for next token)\n",
+    __FILE__, __LINE__, __func__);
+
         //assert(false);
         return scanner.get_next_token();
     }

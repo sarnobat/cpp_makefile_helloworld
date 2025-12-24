@@ -5,6 +5,7 @@ all:
 	chmod a+x mycompiler
 
 run:
+	echo "f();" | ./mycompiler
 	./mycompiler "multiply();"
 
 clean:

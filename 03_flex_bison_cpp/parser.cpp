@@ -45,6 +45,13 @@
     // yylex() arguments are defined in parser.y
     static EzAquarii::Parser::symbol_type yylex(EzAquarii::Scanner &scanner) {
         cout << "SRIDHAR 4 - scanner waiting for next token)";
+        std::fprintf(stderr,
+    "\033[38;5;45m[trace]\033[0m "
+    "\033[38;5;220m%10s:%-5d\033[0m "
+    "\033[38;5;82m%32s()\033[0m "
+    "\033[38;5;202mSRIDHAR\033[0m: 4 - scanner waiting for next token)\n",
+    __FILE__, __LINE__, __func__);
+
         //assert(false);
         return scanner.get_next_token();
     }
@@ -55,7 +62,7 @@
     
     using namespace EzAquarii;
 
-#line 59 "parser.cpp"
+#line 66 "parser.cpp"
 
 
 
@@ -136,7 +143,7 @@
 
 #line 9 "parser.y"
 namespace  EzAquarii  {
-#line 140 "parser.cpp"
+#line 147 "parser.cpp"
 
   /// Build a parser object.
    Parser :: Parser  (EzAquarii::Scanner &scanner_yyarg)
@@ -596,7 +603,7 @@ namespace  EzAquarii  {
           switch (yyn)
             {
   case 2: // program: %empty
-#line 72 "parser.y"
+#line 79 "parser.y"
             {
                 cout << "Examples: " << endl
                      << " * function()" << endl
@@ -608,64 +615,64 @@ namespace  EzAquarii  {
                 //assert(false);
                 
             }
-#line 612 "parser.cpp"
+#line 619 "parser.cpp"
     break;
 
   case 3: // program: program command
-#line 84 "parser.y"
+#line 91 "parser.y"
             {
                 const Command &cmd = yystack_[0].value.as <  EzAquarii::Command  > ();
                 cout << "SRIDHAR: command parsed, updating AST" << endl;
                 cout << endl << "SRIDHAR 2 prompt> ";
                 assert(false);
             }
-#line 623 "parser.cpp"
+#line 630 "parser.cpp"
     break;
 
   case 4: // program: program "semicolon"
-#line 91 "parser.y"
+#line 98 "parser.y"
             {
                 // assert(false);
                 cout << "*** STOP RUN (no more non-terminals to read) ***" << endl;
                 // assert(false);
             }
-#line 633 "parser.cpp"
+#line 640 "parser.cpp"
     break;
 
   case 5: // command: "string" "leftpar" "rightpar"
-#line 100 "parser.y"
+#line 107 "parser.y"
         {
             string &id = yystack_[2].value.as < std::string > ();
             cout << "ID: " << id << endl;
             yylhs.value.as <  EzAquarii::Command  > () = Command(id);
         }
-#line 643 "parser.cpp"
+#line 650 "parser.cpp"
     break;
 
   case 6: // command: "string" "leftpar" arguments "rightpar"
-#line 106 "parser.y"
+#line 113 "parser.y"
         {
             string &id = yystack_[3].value.as < std::string > ();
             const std::vector<uint64_t> &args = yystack_[1].value.as <  std::vector<uint64_t>  > ();
             cout << "function: " << id << ", " << args.size() << endl;
             yylhs.value.as <  EzAquarii::Command  > () = Command(id, args);
         }
-#line 654 "parser.cpp"
+#line 661 "parser.cpp"
     break;
 
   case 7: // arguments: "number"
-#line 115 "parser.y"
+#line 122 "parser.y"
         {
             uint64_t number = yystack_[0].value.as < uint64_t > ();
             yylhs.value.as <  std::vector<uint64_t>  > () = std::vector<uint64_t>();
             yylhs.value.as <  std::vector<uint64_t>  > ().push_back(number);
             cout << "first argument: " << number << endl;
         }
-#line 665 "parser.cpp"
+#line 672 "parser.cpp"
     break;
 
   case 8: // arguments: arguments "comma" "number"
-#line 122 "parser.y"
+#line 129 "parser.y"
         {
             uint64_t number = yystack_[0].value.as < uint64_t > ();
             std::vector<uint64_t> &args = yystack_[2].value.as <  std::vector<uint64_t>  > ();
@@ -673,11 +680,11 @@ namespace  EzAquarii  {
             yylhs.value.as <  std::vector<uint64_t>  > () = args;
             cout << "next argument: " << number << ", arg list size = " << args.size() << endl;
         }
-#line 677 "parser.cpp"
+#line 684 "parser.cpp"
     break;
 
 
-#line 681 "parser.cpp"
+#line 688 "parser.cpp"
 
             default:
               break;
@@ -1103,10 +1110,10 @@ namespace  EzAquarii  {
 
 
 #if YYDEBUG
-  const signed char
+  const unsigned char
    Parser ::yyrline_[] =
   {
-       0,    72,    72,    83,    90,    99,   105,   114,   121
+       0,    79,    79,    90,    97,   106,   112,   121,   128
   };
 
   void
@@ -1139,9 +1146,9 @@ namespace  EzAquarii  {
 
 #line 9 "parser.y"
 } //  EzAquarii 
-#line 1143 "parser.cpp"
+#line 1150 "parser.cpp"
 
-#line 131 "parser.y"
+#line 138 "parser.y"
 
 
 // Bison expects us to provide implementation - otherwise linker complains
