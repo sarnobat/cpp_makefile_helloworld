@@ -431,6 +431,9 @@ static const flex_int16_t yy_chk[26] =
 	#include <cstdlib>
 	#include "scanner.h"
 	#include "parser.hpp"
+    #include <iostream>
+    #include <iomanip>
+
 
 	using namespace std;
 
@@ -439,8 +442,8 @@ static const flex_int16_t yy_chk[26] =
 	#define yyterminate() EzAquarii::Parser::make_END();
 
 	
-#line 442 "scanner.cpp"
-#line 443 "scanner.cpp"
+#line 445 "scanner.cpp"
+#line 446 "scanner.cpp"
 
 #define INITIAL 0
 
@@ -572,11 +575,11 @@ YY_DECL
 		}
 
 	{
-#line 22 "scanner.l"
+#line 25 "scanner.l"
 
 
 
-#line 579 "scanner.cpp"
+#line 582 "scanner.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -635,16 +638,36 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 25 "scanner.l"
+#line 28 "scanner.l"
 { 
-                cout << "SRIDHAR Scanner: identifier [" << yytext << "]" << endl;
+                std::cout
+    // [trace]
+    << "\n\033[38;5;45m[trace]\033[0m "
+
+    // %10s:%-5d
+    << "\033[38;5;220m"
+    << std::right << std::setw(10) << __FILE__ << ":"
+    << std::left  << std::setw(5)  << __LINE__
+    << "\033[0m "
+
+    // %32s()  ← MUST reset to right
+    << "\033[38;5;82m"
+    << std::right << std::setw(34)
+    << (std::string(__func__) + "()")
+    << "\033[0m "
+
+    // SRIDHAR
+    << "\033[38;5;202mSRIDHAR\033[0m"
+    << ": 4 - scanner waiting for next token)\n";
+
+
                 //assert(false);
                 return EzAquarii::Parser::make_STRING(yytext); 
             }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 31 "scanner.l"
+#line 54 "scanner.l"
 {
                 cout << "Scanner: '('" << endl;
                 return EzAquarii::Parser::make_LEFTPAR();
@@ -652,7 +675,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 36 "scanner.l"
+#line 59 "scanner.l"
 { 
                 cout << "Scanner: ')'" << endl;
                 return EzAquarii::Parser::make_RIGHTPAR();
@@ -660,7 +683,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 41 "scanner.l"
+#line 64 "scanner.l"
 {
                 cout << "Scanner: ';'" << endl;
                 return EzAquarii::Parser::make_SEMICOLON();
@@ -668,7 +691,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 46 "scanner.l"
+#line 69 "scanner.l"
 {
                 cout << "Scanner: ','" << endl;
                 return EzAquarii::Parser::make_COMMA();
@@ -677,14 +700,14 @@ YY_RULE_SETUP
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 51 "scanner.l"
+#line 74 "scanner.l"
 {
                 //cout << "Scanner: whitechar (ignored)" << endl;
             }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 55 "scanner.l"
+#line 78 "scanner.l"
 {
                 cout << "Scanner: decimal number: " << yytext << endl;
                 uint64_t number = strtoull(yytext, 0, 10);
@@ -693,21 +716,21 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 61 "scanner.l"
+#line 84 "scanner.l"
 { 
                 cout << "Scanner: unknown character [" << yytext << "]" << endl; 
             }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 65 "scanner.l"
+#line 88 "scanner.l"
 { return yyterminate(); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 68 "scanner.l"
+#line 91 "scanner.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 710 "scanner.cpp"
+#line 733 "scanner.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1668,6 +1691,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 68 "scanner.l"
+#line 91 "scanner.l"
 
 

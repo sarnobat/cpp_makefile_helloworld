@@ -35,7 +35,7 @@
     // called from Parser.cpp::Parser.parse() (which is called from main())
     // yylex() arguments are defined in parser.y
     static EzAquarii::Parser::symbol_type yylex(EzAquarii::Scanner &scanner) {
-        cout << "SRIDHAR 4 - scanner waiting for next token)";
+        // cout << "SRIDHAR 4 - scanner waiting for next token)";
         std::fprintf(stderr,
     "\033[38;5;45m[trace]\033[0m "
     "\033[38;5;220m%10s:%-5d\033[0m "
