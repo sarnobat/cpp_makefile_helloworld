@@ -5,8 +5,8 @@ all:
 	chmod a+x mycompiler
 
 run:
-	echo "f();" | ./mycompiler
-	./mycompiler "multiply();"
+	echo "multiply();" | ./mycompiler
+# 	./mycompiler "multiply();"
 
 clean:
 	rm -rf scanner.cpp

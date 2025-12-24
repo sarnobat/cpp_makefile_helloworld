@@ -641,24 +641,24 @@ YY_RULE_SETUP
 #line 28 "scanner.l"
 { 
                 std::cout
-    // [trace]
-    << "\n\033[38;5;45m[trace]\033[0m "
+                    // [trace]
+                    << "\n\033[38;5;45m[trace]\033[0m "
 
-    // %10s:%-5d
-    << "\033[38;5;220m"
-    << std::right << std::setw(10) << __FILE__ << ":"
-    << std::left  << std::setw(5)  << __LINE__
-    << "\033[0m "
+                    // %10s:%-5d
+                    << "\033[38;5;220m"
+                    << std::right << std::setw(10) << __FILE__ << ":"
+                    << std::left  << std::setw(5)  << __LINE__
+                    << "\033[0m "
 
-    // %32s()  ← MUST reset to right
-    << "\033[38;5;82m"
-    << std::right << std::setw(34)
-    << (std::string(__func__) + "()")
-    << "\033[0m "
+                    // %32s()  ← MUST reset to right
+                    << "\033[38;5;82m"
+                    << std::right << std::setw(34)
+                    << (std::string(__func__) + "()")
+                    << "\033[0m "
 
-    // SRIDHAR
-    << "\033[38;5;202mSRIDHAR\033[0m"
-    << ": 4 - scanner waiting for next token)\n";
+                    // SRIDHAR
+                    << "\033[38;5;202mSRIDHAR\033[0m"
+                    << ": 4 - scanner waiting for next token)\n";
 
 
                 //assert(false);
