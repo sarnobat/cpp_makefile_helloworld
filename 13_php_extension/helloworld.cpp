@@ -28,7 +28,8 @@ zend_module_entry helloworld_module_entry = {
 
 ZEND_GET_MODULE(helloworld)
 
+// called as hello_world() in index.php
 PHP_FUNCTION(hello_world)
 {
-    RETURN_STRING("Hello from the C++ PHP extension");
+    RETURN_STRING("SRIDHAR: Hello from the C++ PHP extension");
 }

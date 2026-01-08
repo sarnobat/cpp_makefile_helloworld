@@ -24,6 +24,7 @@ $value = $loaded ? hello_world() : 'Extension not loaded';
   <body>
     <h1>PHP + C++ Extension</h1>
     <p>Extension loaded: <strong><?= $loaded ? 'yes' : 'no' ?></strong></p>
+    <!-- call C++ function -->
     <p>hello_world(): <code><?= htmlspecialchars($value, ENT_QUOTES) ?></code></p>
   </body>
 </html>
