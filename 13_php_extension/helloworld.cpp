@@ -2,6 +2,7 @@ extern "C" {
 #include "php.h"
 }
 
+// Prototypes
 PHP_FUNCTION(hello_world);
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_hello_world, 0, 0, 0)
@@ -13,16 +14,16 @@ static const zend_function_entry helloworld_functions[] = {
 };
 
 zend_module_entry helloworld_module_entry = {
-    STANDARD_MODULE_HEADER,
-    "helloworld",
-    helloworld_functions,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    "0.1.0",
-    STANDARD_MODULE_PROPERTIES
+    STANDARD_MODULE_HEADER,      // Module API header/version metadata.
+    "helloworld",                // Extension name for phpinfo() and loading.
+    helloworld_functions,        // Function table exposed to PHP.
+    NULL,                        // MINIT: module initialization callback.
+    NULL,                        // MSHUTDOWN: module shutdown callback.
+    NULL,                        // RINIT: per-request initialization callback.
+    NULL,                        // RSHUTDOWN: per-request shutdown callback.
+    NULL,                        // MINFO: phpinfo() table callback.
+    "0.1.0",                     // Extension version string.
+    STANDARD_MODULE_PROPERTIES   // Default module properties macro.
 };
 
 ZEND_GET_MODULE(helloworld)
